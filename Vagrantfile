@@ -13,6 +13,16 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     v.cpus = 2
   end
 
+  # link to projects folder
+  if File.directory?(File.expand_path("~/projects")) 
+    config.vm.synced_folder "~/projects", "/home/vagrant/projects"
+  end
+
+  # link to projects folder
+  if File.directory?(File.expand_path("~/github")) 
+    config.vm.synced_folder "~/github", "/home/vagrant/github"
+  end
+
   #if File.directory?(File.expand_path("~/projects")) 
   #  config.vm.synced_folder "~/projects", "/home/vagrant/projects"
   #end
