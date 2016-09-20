@@ -3,12 +3,13 @@
 
 VAGRANTFILE_API_VERSION = "2"
 vagrant_root = File.dirname(__FILE__)
+hostname = "ros2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "bento/ubuntu-16.04"
-  #config.vm.box = "ubuntu/xenial64"
-  #config.vm.box = "ubuntu/trusty64"
+  config.vm.hostname = hostname
   config.vm.provider "virtualbox" do |v|
+    v.name = hostname
     v.memory = 6144
     v.cpus = 2
   end
@@ -18,21 +19,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.synced_folder "~/projects", "/home/vagrant/projects"
   end
 
-  # link to projects folder
-  if File.directory?(File.expand_path("~/github")) 
-    config.vm.synced_folder "~/github", "/home/vagrant/github"
-  end
-
-  #if File.directory?(File.expand_path("~/projects")) 
-  #  config.vm.synced_folder "~/projects", "/home/vagrant/projects"
-  #end
-
-	host_name = "ros2"
 	config.vm.define "machine1" do |machine|
 		if Vagrant.has_plugin?("vagrant-timezone")
 			config.timezone.value = :host
 		end 
-		machine.vm.hostname = host_name
 		# Only execute once the Ansible provisioner,
 		# when all the machines are up and ready.
 		machine.vm.provision :ansible do |ansible|
@@ -40,7 +30,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 			ansible.limit = "machine1"
 			ansible.playbook = "main.yaml"
 			ansible.extra_vars = { 
-				host_name: host_name,
+				host_name: hostname,
 			}
 		end
 	end
